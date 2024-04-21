@@ -1,0 +1,186 @@
+import pygame,sys,random,time,math
+
+
+pygame.init()
+pygame.font.init()
+screen = pygame.display.set_mode((1000,600))
+caption = pygame.display.set_caption("doge game")
+# path = r"C:\Users\reedr\Downloads\_623ce0dd-dff3-4c9b-a4ad-868e9d7ca9c7.jpeg"
+# img =pygame.image.load(path)
+# pygame.display.set_icon(img)
+
+X = 500+500
+Y = 600
+
+
+
+
+ 
+
+# .textRect.center = (1000,10)
+
+
+
+font = pygame.font.Font(None,36)
+
+
+c = pygame.time.Clock()
+
+
+fps = 60
+
+class player:
+
+    h = 10
+    w = 10
+    position= pygame.Vector2(500,300)
+
+    def movementx():
+        key = pygame.key.get_pressed()
+        if key[pygame.K_a] and player.position.x >= 0:
+
+            player.position.x -= 5
+            return player.position.x
+
+        elif key[pygame.K_d]:
+            if player.position.x == 990:
+                player.position.x = 990
+
+            else:
+                
+                player.position.x +=   5
+                return player.position.x
+
+    def movementy():
+        key = pygame.key.get_pressed()
+        if key[pygame.K_w] and player.position.y >= 0:
+            player.position.y -= 5
+            
+            return player.position.y
+
+        elif key[pygame.K_s]:
+            if player.position.y ==590:
+     
+                player.position.y += 0
+                return player.position.y
+
+            else:
+                player.position.y += 5
+                
+                return player.position.y
+    def present():
+        return pygame.draw.rect(screen,(244,34,122),(player.position.x,player.position.y,player.h,player.w))
+start = time.time()
+elsapd = 0
+sr = screen.get_rect()
+point = 0
+class enemy:
+    cms = 2000
+    ccount = 0
+    cs =[]
+    pc = []
+    def spawn():
+        enemy.ccount +=c.get_time()
+        elsapd = time.time() - start
+        if enemy.ccount > enemy.cms:
+            for i in range(random.randint(0,10)):
+                cx = random.randint(-450,0)
+                cy = random.randint(-800,0)
+
+                    
+                
+                appp= pygame.draw.circle(screen,(random.randint(50,255),random.randint(50,255),random.randint(50,255)),(cx,cy),20)
+                pointc = pygame.draw.circle(screen,(255,255,0),(cx,cy),30,10)
+                enemy.cs.append(appp)
+                enemy.pc.append(pointc)
+
+                if len(enemy.cs) != len(enemy.pc):
+                    enemy.pc.pop()
+                    return enemy.pc
+            
+
+            enemy.cms = max(100,enemy.cms-10)
+            enemy.ccount = 0
+
+        return enemy.ccount
+        return enemy.cms
+        return enemy.cs
+        return enemy.pc
+
+    def delenemy():
+        for scar in enemy.cs[:]:
+            scar.x +=2
+            scar.y +=3
+            if scar.x > 1000 or scar.y > 600:
+                enemy.cs.remove(scar)
+        for i in enemy.cs[:]:
+            i.x += 2
+            i.y += 3
+            # if i.x >1000 or i.y > 600:
+            #     enemy.pc.remove(i)
+
+            
+
+    def present(score):
+        color = (255,255,0)
+        for i in range(len(enemy.cs)):
+            
+            pygame.draw.circle(screen,  (33,123,32),(enemy.cs[i].x,enemy.cs[i].y),20)
+            
+            pygame.draw.circle(screen,color,(enemy.cs[i].x,enemy.cs[i].y),50,1)
+            distance = math.sqrt(((enemy.cs[i].x - player.position.x) ** 2) + ((enemy.cs[i].y - player.position.y) ** 2))
+            if distance <= player.w + 10 or distance <= player.h + 10:  # Adjust this value based on player and enemy sizes
+                # Collision detected! Perform actions (e.g., end game, lose life)
+
+
+                scre = font.render(f"score : {score}",True,(255,255,233))
+                # screen.blit(score,(500,300))
+                # go = font.render(f"Game over",True,(255,255,233))
+                # time.sleep(10)
+                sys.exit()
+
+
+            if distance <= player.w + 30 or distance <= player.h + 30:
+                
+                
+
+                score += 1
+            
+                
+                color = (0,0,0)
+                scre = font.render(f"score:{score}",True,(255,255,233))   
+                screen.blit(scre,(900,10)) 
+                
+
+                
+            
+
+    
+ 
+while 1:
+
+
+
+    for i in pygame.event.get():
+        if i.type == pygame.QUIT:
+            sys.exit()
+
+
+
+    screen.fill((0,0,0))
+    # screen.blit(text,textRect)
+    score = font.render(f"score : {point}", True, (255, 255, 233))
+    screen.blit(score, (900, 10))
+    player.movementx()
+    player.movementy()
+    player.present()
+    enemy.spawn()
+    enemy.delenemy()
+    enemy.present(point)
+
+    pygame.display.flip()
+    pygame.display.update()
+
+    c.tick(fps)
+
+
